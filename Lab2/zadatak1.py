@@ -1,3 +1,8 @@
+import numpy as np
+import matplotlib.pyplot as plt
+n = np.arange(32)
+x = np.cos(2 * np.pi * n / np.sqrt(31))
+
 """
 clc
 n = 0:31;
