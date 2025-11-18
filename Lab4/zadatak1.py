@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
-#from scipy.fft import fftshift
+
 
 mu = [2.4,4.8,1.2]
 t = np.arange(0, 10 ** (-4) ,10 ** (-7))
