@@ -11,8 +11,8 @@ def load_audio_mono(file_path):
     return samplerate, data_mono
 
 #data spliting
-def split_audio(data_mono, segment_duration=5, target_samplerate=16000):
-    data_array = np.array_split(data_mono, int(len(data_mono)/ target_samplerate / segment_duration))
+def split_audio(data_mono, samplerate, segment_duration=5):
+    data_array = np.array_split(data_mono, round(len(data_mono)/ samplerate / segment_duration))
     return data_array
 
 #applyiing window function and resampling to 16kHz
