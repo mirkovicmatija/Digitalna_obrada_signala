@@ -1,11 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import librosa
+import json
+
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+
 import preprocess as preprocess
 import analyse as analyse
-import json
-from sklearn.model_selection import train_test_split
 
 # hornet audio preprocessing
 with open('data.json', 'r') as file:
@@ -46,32 +46,9 @@ for f in filtered:
     # Compute Mel-spectrogram
     log_mel_spectrogram = analyse.analyze_segments(f, samplerate=16000)
     z = analyse.zscore_normalization(log_mel_spectrogram)
+    #analyse.plot_spectrogram(log_mel_spectrogram)
     z = np.concatenate(z).reshape(1, -1)
-   
-
+    #preprocess.data_writing(z, label=-1, filepath='test_data.json')
     predictions = knn.predict(z)
     print(f"Predictions: {predictions}")
 
-"""    
-    # Plot Mel-spectrogram
-    plt.figure(figsize=(10, 4))
-    librosa.display.specshow(log_mel_spectrogram, sr=16000, x_axis='time', y_axis='mel', fmax=2048)
-    plt.colorbar(format='%+2.0f dB')
-    plt.title('Mel-frequency spectrogram')
-    plt.tight_layout()
-    plt.show()
-
-
-   
-    n = int(input("Enter segment number: "))
-    with open('data.json', 'r') as file:
-        data1 = json.load(file)
-    with open('data.json', 'w') as file:
-        if n == 1:
-            data1['hornet'].append(z.tolist())
-        if n == 2:
-            data1['non_hornet'].append(z.tolist())
-        else:
-            pass
-        json.dump(data1, file, indent=4)
-"""

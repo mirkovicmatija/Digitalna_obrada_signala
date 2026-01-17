@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import signal
 from scipy.io import wavfile
+import json
 
 
 #stereo -> mono
@@ -26,5 +27,18 @@ def preprocess_segments(data_array, original_samplerate, target_samplerate=16000
         filtered.append(a)
     return filtered
 
+#reshaping data for training
 def reshape_segment(train_data):
     return train_data.reshape(train_data.shape[0], -1)
+
+# Help function to write data to JSON file
+def data_writing(segment, label, filepath='data.json'):
+   
+    with open(filepath, 'r') as file:
+        data = json.load(file)
+    if label == 1:
+        data['hornet'].append(segment.tolist())
+    elif label == 0:
+        data['non_hornet'].append(segment.tolist())
+    with open(filepath, 'w') as file:
+        json.dump(data, file)
