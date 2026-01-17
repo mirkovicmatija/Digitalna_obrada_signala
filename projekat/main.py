@@ -1,16 +1,36 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import stats
 import librosa
+from sklearn.neighbors import KNeighborsClassifier
 import preprocess as preprocess
+import analyse as analyse
+import json
+from sklearn.model_selection import train_test_split
 
 # hornet audio preprocessing
+with open('data.json', 'r') as file:
+        d = json.load(file)
+        hornets = d['hornet']
+        no_hornet = d['non_hornet']
 
-#no-hornet audio preprocessing
 
+train_data = np.array(hornets + no_hornet)
+label = np.array([1,1,1,1,1,1,1,1,1,1,0,0,0,0])
 
+#reshaping data for training
+X = preprocess.reshape_segment(train_data)
 
+# Splitting dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, label, test_size=0.2, random_state=42)
 
+knn = KNeighborsClassifier(n_neighbors=2) # Choose a value for k
+knn.fit(X_train, y_train)
+
+# Evaluate the classifier
+accuracy = knn.score(X_test, y_test)
+print(f"Model accuracy: {accuracy * 100:.2f}%")
+
+# Testing the classifier
 
 #stereo -> mono 
 samplerate, data = preprocess.load_audio_mono('test_audio/13-10-22 shotgun.wav')
@@ -24,24 +44,34 @@ filtered = preprocess.preprocess_segments(data_array, samplerate, target_sampler
 
 for f in filtered:
     # Compute Mel-spectrogram
-    mel_spectrogram = librosa.feature.melspectrogram(y=f, sr=16000, n_mels=128, fmax=8000)
-    log_mel_spectrogram = librosa.power_to_db(mel_spectrogram, ref=np.max)
+    log_mel_spectrogram = analyse.analyze_segments(f, samplerate=16000)
+    z = analyse.zscore_normalization(log_mel_spectrogram)
+    z = np.concatenate(z).reshape(1, -1)
+   
+
+    predictions = knn.predict(z)
+    print(f"Predictions: {predictions}")
+
+"""    
     # Plot Mel-spectrogram
     plt.figure(figsize=(10, 4))
-    librosa.display.specshow(log_mel_spectrogram, sr=16000, x_axis='time', y_axis='mel', fmax=512)
+    librosa.display.specshow(log_mel_spectrogram, sr=16000, x_axis='time', y_axis='mel', fmax=2048)
     plt.colorbar(format='%+2.0f dB')
     plt.title('Mel-frequency spectrogram')
     plt.tight_layout()
     plt.show()
-    # Z-score normalization
-    z = stats.zscore(log_mel_spectrogram, axis=1, ddof=1)
-        
 
-"""
-ff, tt, sxx = signal.spectrogram(filtered_list,16000)#,np.hamming(len(f)),nfft=len(f),noverlap=31) 
-fig, [graph1, graph2, graph3] = plt.subplots(nrows = 3, ncols = 1)
-graph1.plot(np.arange(len(filtered_list)),filtered_list)
-graph2.plot(np.arange(len(filtered_list)),np.fft.fft(filtered_list).real)
-graph3.pcolormesh(tt, ff, sxx, shading='gouraud')
-plt.show()
+
+   
+    n = int(input("Enter segment number: "))
+    with open('data.json', 'r') as file:
+        data1 = json.load(file)
+    with open('data.json', 'w') as file:
+        if n == 1:
+            data1['hornet'].append(z.tolist())
+        if n == 2:
+            data1['non_hornet'].append(z.tolist())
+        else:
+            pass
+        json.dump(data1, file, indent=4)
 """

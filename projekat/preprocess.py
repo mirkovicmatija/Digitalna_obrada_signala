@@ -6,7 +6,8 @@ from scipy.io import wavfile
 #stereo -> mono
 def load_audio_mono(file_path):
     samplerate, data = wavfile.read(file_path)
-    print(f"rate: {samplerate}, \ndata size: {len(data)}")
+    if len(data.shape) == 1:
+        return samplerate, data
     data_mono = data[:,1]/2 + data[:,0]/2 
     return samplerate, data_mono
 
@@ -24,3 +25,6 @@ def preprocess_segments(data_array, original_samplerate, target_samplerate=16000
         a = signal.resample(t, smpl)
         filtered.append(a)
     return filtered
+
+def reshape_segment(train_data):
+    return train_data.reshape(train_data.shape[0], -1)
