@@ -11,7 +11,7 @@ import analyse as analyse
 samplerate, data = preprocess.load_audio_mono('test_audio/13-10-22 shotgun.wav')
 
 #data spliting
-data_array = preprocess.split_audio(data, samplerate, segment_duration=5)
+data_array = preprocess.split_audio(data, samplerate, segment_duration=3)
 
 #applyiing window function and resampling to 16kHz
 filtered = preprocess.preprocess_segments(data_array, samplerate, target_samplerate=16000)
@@ -26,7 +26,7 @@ for f in filtered:
 
 print(len(z_array))
 train_data = np.array(z_array)
-label = np.array([1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1])
+label = np.array([1,1,1,1,0,1,0,0,0,1,0,0,1,1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,1,1,0])
 
 #reshaping data for training
 X = preprocess.reshape_segment(train_data)

@@ -1,3 +1,4 @@
 *.wav
+*.pyc
 projekat/__pycache__/
 Lab8/BLIdata.mat
