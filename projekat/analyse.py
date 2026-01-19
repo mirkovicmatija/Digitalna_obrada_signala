@@ -35,3 +35,13 @@ def plot_spectrogram(log_mel_spectrogram):
     plt.title('Mel-frequency spectrogram')
     plt.tight_layout()
     plt.show()
+    
+# Help function to plot waveform
+def plot_graph(t):
+    plt.plot(np.arange(len(t)), t, label='Audio Signal 1', alpha=0.7, color='blue',  linewidth=1)
+    plt.xlabel('Sample Index')
+    plt.ylabel('Amplitude')
+    plt.title('Audio Signal Segment Waveform')
+    plt.grid()
+    plt.show()
+   
